@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finding in DRAHNS</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            background-color: #FFDF00;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #e1ad01;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        input, textarea, button {
+            width: 80%;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #e1ad01;
+        }
+        button {
+            background-color: #e1ad01;
+            color: white;
+            cursor: pointer;
+        }
+        .profile-picture img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #e1ad01;
+            display: none;
+        }
+        .chat-box {
+            display: none;
+            border: 2px solid #e1ad01;
+            padding: 10px;
+            margin-top: 20px;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Finding in DRAHNS</h1>
+        <p>Create your portfolio and connect with others!</p>
+    </header>
+    
+    <div class="container">
+        <h2>Create Your Profile</h2>
+        <input type="text" id="username" placeholder="Enter unique username" required>
+        <input type="text" id="fullname" placeholder="Full Name" required>
+        <textarea id="bio" placeholder="Write about yourself"></textarea>
+        <input type="file" id="profile-pic" accept="image/*">
+        <div class="profile-picture">
+            <img id="preview-pic" src="" alt="Profile Picture">
+        </div>
+        <button onclick="saveProfile()">Save Profile</button>
+    </div>
+
+    <div class="container">
+        <h2>Find a User</h2>
+        <input type="text" id="search-user" placeholder="Enter username">
+        <button onclick="searchUser()">Search</button>
+        <div id="search-result"></div>
+    </div>
+
+    <div class="container chat-box" id="chat-box">
+        <h2>Chat with <span id="chat-user"></span></h2>
+        <textarea id="chat-message" placeholder="Type a message..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+        <div id="chat-messages"></div>
+    </div>
+
+    <script>
+        let users = {};
+        
+        document.getElementById("profile-pic").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("preview-pic").src = e.target.result;
+                    document.getElementById("preview-pic").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function saveProfile() {
+            const username = document.getElementById("username").value;
+            const fullname = document.getElementById("fullname").value;
+            const bio = document.getElementById("bio").value;
+            const profilePic = document.getElementById("preview-pic").src;
+            
+            if (username && fullname) {
+                users[username] = { fullname, bio, profilePic };
+                alert("Profile saved!");
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+        
+        function searchUser() {
+            const searchUsername = document.getElementById("search-user").value;
+            const user = users[searchUsername];
+            
+            if (user) {
+                document.getElementById("search-result").innerHTML = `
+                    <h3>${user.fullname}</h3>
+                    <p>${user.bio}</p>
+                    <img src="${user.profilePic}" style="width:100px; height:100px; border-radius:50%; border:3px solid #e1ad01;">
+                    <br><button onclick="startChat('${searchUsername}')">Chat</button>
+                `;
+            } else {
+                document.getElementById("search-result").innerHTML = "User not found.";
+            }
+        }
+        
+        function startChat(username) {
+            document.getElementById("chat-box").style.display = "block";
+            document.getElementById("chat-user").innerText = username;
+            document.getElementById("chat-messages").innerHTML = "";
+        }
+        
+        function sendMessage() {
+            const message = document.getElementById("chat-message").value;
+            if (message) {
+                const chatMessages = document.getElementById("chat-messages");
+                chatMessages.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+                document.getElementById("chat-message").value = "";
+            }
+        }
+    </script>
+</body>
+</html>
